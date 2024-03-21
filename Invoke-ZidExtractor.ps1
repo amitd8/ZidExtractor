@@ -2,19 +2,21 @@
     [string]$Scope,
     [string]$CSV
     )
- 
-# Check if arguments are provided
+    Write-Host "ZidExtractor initializes!" -ForegroundColor Blue
+    Start-Sleep -Seconds 2
+
+# Do not continue if -Scope argument is not inputted by user
 if (-not $Scope) {
-    Write-Error "Usage: Invoke-ZidExtractor.ps1 -Scope 'AllUsers' or 'CurrentUser' or 'C:\your\path\to\dir' (None-Recursive) or 'C:\your\path\to\file'" -Category SyntaxError
+    Write-Error "Usage: Invoke-ZidExtractor.ps1 -Scope 'AllUsers' or 'CurrentUser' or 'C:\your\path\to\dir' (None-Recursive) or 'C:\your\path\to\file', Optional -CSV <path>" -Category SyntaxError
     exit
 }
  
-
+# Extract Zids from all Download folders of any user with UserProfile
 if ($Scope -eq "AllUsers" ) {
     
     $Users = Get-ChildItem "$env:SystemDrive\\Users"
     # Loop through all users with user profile
-    $o = "UserName, File, ReferalURL, HostURL"
+    $o = "CreationTime, UserName, File, ReferalURL, HostURL"
     foreach ($User in $Users) 
     {
         #Locate Downloads folder
@@ -25,11 +27,13 @@ if ($Scope -eq "AllUsers" ) {
         foreach ($file in $downloadedFiles)
         {
              $path = $file.FullName
+             $time = $file.CreationTime
              $zid = Get-Content $path -Stream Zone.Identifier -ErrorAction SilentlyContinue 
-             $zidreferalUrl = $zid | sls -Pattern "ReferrerUrl=(.*)" | % {"$($_.matches.groups[1])"}
-             $zidhost = $zid | sls -Pattern "HostUrl=(.*)" | % {"$($_.matches.groups[1])"}
-             if ($zidreferalUrl -ne $null -and $zidhost -ne $null ){
-                $o += "$User,$path,$zidreferalUrl,$zidhost"
+             $zidreferalUrl = $zid | Select-String -Pattern "ReferrerUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
+             $zidhost = $zid | Select-String -Pattern "HostUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
+             if ($null -ne $zidreferalUrl -and $null -ne $zidhost ){
+                $o += "$time,$User,$path,$zidreferalUrl,$zidhost`n"
+
          }
              
         }
@@ -39,20 +43,22 @@ if ($Scope -eq "AllUsers" ) {
  elseif ( $Scope -eq "CurrentUser")
  {
         $User = $env:USERNAME
-        $o = "UserName, File, ReferalURL, HostURL"
+        $o = "CreationTime, UserName, File, ReferalURL, HostURL"
         $dfolder = "$env:HOMEPATH\\Downloads"
         $downloadedFiles = Get-ChildItem -Recurse -File $dfolder
         #For each download extract Zone identifier data stream 
         foreach ($file in $downloadedFiles)
         {
              $path = $file.FullName
+             $time = $file.CreationTime
              $zid = Get-Content $path -Stream Zone.Identifier -ErrorAction SilentlyContinue 
-             $zidreferalUrl = $zid | sls -Pattern "ReferrerUrl=(.*)" | % {"$($_.matches.groups[1])"}
-             $zidhost = $zid | sls -Pattern "HostUrl=(.*)" | % {"$($_.matches.groups[1])"}
-             if ($zidreferalUrl -ne $null -and $zidhost -ne $null ){
-                $o += "$User,$path,$zidreferalUrl,$zidhost"
+             $zidreferalUrl = $zid | Select-String -Pattern "ReferrerUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
+             $zidhost = $zid | Select-String -Pattern "HostUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
+             if ($null -ne $zidreferalUrl -and $null -ne $zidhost ){
+                $o += "$time,$User,$path,$zidreferalUrl,$zidhost`n"
+
             }
-             #Add-Content -Value $User","$env:HOMEDRIVE\$dfolder\$file","$zidreferalUrl","$zidhost -Path $env:HOMEPATH\\Desktop\\ZidCurrentUser.csv
+             
         }
 
         
@@ -70,16 +76,16 @@ else{
             $downloadedFiles = Get-ChildItem -File -Recurse $dfolder
             #For each download extract Zone identifier data stream 
 
-            Write-Host "File, ReferalURL, HostURL"
+            $o = "CreationTime, File, ReferalURL, HostURL"
             foreach ($file in $downloadedFiles)
             {
                  $path = $file.FullName
-              
+                 $time = $file.CreationTime
                  $zid = Get-Content $path -Stream Zone.Identifier -ErrorAction SilentlyContinue 
-                 $zidreferalUrl = $zid | sls -Pattern "ReferrerUrl=(.*)" | % {"$($_.matches.groups[1])"}
-                 $zidhost = $zid | sls -Pattern "HostUrl=(.*)" | % {"$($_.matches.groups[1])"}
-                 if ($zidreferalUrl -ne $null -and $zidhost -ne $null ){
-                    Write-Host $path","$zidreferalUrl","$zidhost
+                 $zidreferalUrl = $zid | Select-String -Pattern "ReferrerUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
+                 $zidhost = $zid | Select-String -Pattern "HostUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
+                 if ($null -ne $zidreferalUrl -and $null -ne $zidhost ){
+                    $o = "$time,$path,$zidreferalUrl,$zidhost`n"
                 }
                 }
 
@@ -87,9 +93,18 @@ else{
         
  }  
 
+
 if ( $CSV) {  
-    $o | Out-File -FilePath $CSV 
+     try {
+        $o | Out-File -FilePath $CSV -ErrorAction Stop
+        $x = (Get-Item $CSV).FullName
+        Write-Host "CSV Successfuly Written to $x" -ForegroundColor Green
     }
+    catch {
+        Write-Host "Error occurred while writing CSV file: $_" -ForegroundColor Red
+        exit 1 
+    }
+}
  
 else {
     $o}
