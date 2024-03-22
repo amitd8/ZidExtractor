@@ -55,3 +55,7 @@ ZidExtractor initializes!
 CreationTime, File, ReferalURL, HostURL
 03/22/2024 12:13:49,C:\Users\amida\Desktop\TimelineExplorer.zip,https://ericzimmerman.github.io/,https://f001.backblazeb2.com/file/EricZimmermanTools/net6/TimelineExplorer.zip
 ```
+``` powershell
+PS .\Invoke-ZidExtractor.ps1 -Scope ..\TimelineExplorer.zip
+SAAR THE GAY
+```
