@@ -85,7 +85,7 @@ else{
                  $zidreferalUrl = $zid | Select-String -Pattern "ReferrerUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
                  $zidhost = $zid | Select-String -Pattern "HostUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
                  if ($null -ne $zidreferalUrl -and $null -ne $zidhost ){
-                    $o = "$time,$path,$zidreferalUrl,$zidhost`n"
+                    $o += "$time,$path,$zidreferalUrl,$zidhost`n"
                 }
                 }
 
