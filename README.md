@@ -8,13 +8,19 @@
 \_____/_|\__,_\____/_/\_\\__|_|  \__,_|\___|\__\___/|_|   
 ```                                               
 
-ZidExtractor.ps1 is a PowerShell written script that automates the extraction process of Zone.identifer data of a file! 
+Invoke-ZidExtractor.ps1 is a PowerShell script that automates the extraction process of Zone.identifer data of a file! 
+
 Zone.identifer is metadata attribute is used by the operating system to store information about the origin of a file and its security zone!
 This data can be useful for Digital Forensics Investigators to determain website from which a file was downloaded.
-![image](https://github.com/amitd8/ZidExtractor/assets/97177937/52b9be30-dbd7-4ca7-aad6-994fbbb71a4e)
 ![image](https://github.com/amitd8/ZidExtractor/assets/97177937/63b95ae2-5f0b-423c-908f-7c67b2ee7114)
-Zone.identifer is stored in an ADS (Alternative Data Stream) of a file, due to that it's not always straight forward to access.
+![image](https://github.com/amitd8/ZidExtractor/assets/97177937/52b9be30-dbd7-4ca7-aad6-994fbbb71a4e)
 
+Zone.identifer is stored in an ADS (Alternative Data Stream) of a file, due to that it's not always straight forward to access.
+This script will extract the following useful data about files scanned:
+
+`Host URL` - Includes the website from which the file was downloaded
+
+`Referral URL` - Includes the Actual URL from which the file was downloaded
 ## Running ZidExtractor
 Running `Invoke-ZidExtractor.ps1` with no parameters will result with an Error, Allways supplu a `-Scope`.
 If a file doesn't have a Zid the script will output none.
