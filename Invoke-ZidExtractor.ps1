@@ -16,7 +16,7 @@ if ($Scope -eq "AllUsers" ) {
     
     $Users = Get-ChildItem "$env:SystemDrive\\Users"
     # Loop through all users with user profile
-    $o = "CreationTime, UserName, File, ReferalURL, HostURL"
+    $o = "CreationTime, UserName, File, ReferalURL, HostURL`n"
     foreach ($User in $Users) 
     {
         #Locate Downloads folder
@@ -43,7 +43,7 @@ if ($Scope -eq "AllUsers" ) {
  elseif ( $Scope -eq "CurrentUser")
  {
         $User = $env:USERNAME
-        $o = "CreationTime, UserName, File, ReferalURL, HostURL"
+        $o = "CreationTime, UserName, File, ReferalURL, HostURL`n"
         $dfolder = "$env:HOMEPATH\\Downloads"
         $downloadedFiles = Get-ChildItem -Recurse -File $dfolder
         #For each download extract Zone identifier data stream 
@@ -76,7 +76,7 @@ else{
             $downloadedFiles = Get-ChildItem -File -Recurse $dfolder
             #For each download extract Zone identifier data stream 
 
-            $o = "CreationTime, File, ReferalURL, HostURL"
+            $o = "CreationTime, File, ReferalURL, HostURL`n"
             foreach ($file in $downloadedFiles)
             {
                  $path = $file.FullName
