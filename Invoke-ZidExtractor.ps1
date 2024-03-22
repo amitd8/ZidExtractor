@@ -39,7 +39,7 @@ if ($Scope -eq "AllUsers" ) {
         }
      }
  }
-
+# Scan files in downloads folder of current user
  elseif ( $Scope -eq "CurrentUser")
  {
         $User = $env:USERNAME
@@ -63,11 +63,12 @@ if ($Scope -eq "AllUsers" ) {
 
         
  }
+ # If the scope is not AllUsers or CurrentUser, check if a path to file or directory was supplied, and scan it for zids
 else{
         $ifpossible = Test-Path $Scope
         if (-not $ifpossible)
         {
-        Write-Error "The Scope is unreachable, Try providing a scope with exsiting path (Directory or file on disk)" -Category ObjectNotFound
+        Write-Error "The Scope is unreachable, Try providing a scope with existing path (Directory or file on disk)" -Category ObjectNotFound
         exit
         }
         else{
@@ -93,7 +94,7 @@ else{
         
  }  
 
-
+# if CSV argument was supplied, try writing the output to path supplied
 if ( $CSV) {  
      try {
         $o | Out-File -FilePath $CSV -ErrorAction Stop
