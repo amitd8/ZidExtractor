@@ -94,7 +94,7 @@ else{
         
  }  
 
-# if CSV argument was supplied, try writing the output to path supplied
+# If -CSV argument was supplied, try writing the output to path supplied
 if ( $CSV) {  
      try {
         $o | Out-File -FilePath $CSV -ErrorAction Stop
