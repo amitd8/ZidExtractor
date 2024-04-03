@@ -4,9 +4,28 @@
     )
     Write-Host "ZidExtractor initializes!" -ForegroundColor Blue
     Start-Sleep -Seconds 2
+function Get-Zids {
 
+    param (
+        [string]$Scope,
+        $Workfolder,
+        $User
+    )
+    $o = "CreationTime, UserName, File, ReferalURL, HostURL`n"
+    foreach ($file in $Workfolder)
+    {
+         $path = $file.FullName
+         $time = $file.CreationTime
+         $zid = Get-Content $path -Stream Zone.Identifier -ErrorAction SilentlyContinue 
+         $zidreferalUrl = $zid | Select-String -Pattern "ReferrerUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
+         $zidhost = $zid | Select-String -Pattern "HostUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
+         if ($null -ne $zidreferalUrl -and $null -ne $zidhost ){
+            $o += "$time,$User,$path,$zidreferalUrl,$zidhost`n"
 
-    asDSAD"LKjsad:KLOnmsad:KLnASD:LKSAD:KNL;nkldsA:LNKADSNKL:DAS:LNKNKL:
+     }
+    return $o
+    }
+}
 
 # Do not continue if -Scope argument is not inputted by user
 if (-not $Scope) {
@@ -27,21 +46,11 @@ if ($Scope -eq "AllUsers" ) {
         $dfolder = "$env:SystemDrive\\Users\\$User\\Downloads"
         $downloadedFiles = Get-ChildItem -Recurse -File $dfolder 
         #For each download extract Zone identifier data stream 
-        foreach ($file in $downloadedFiles)
-        {
-             $path = $file.FullName
-             $time = $file.CreationTime
-             $zid = Get-Content $path -Stream Zone.Identifier -ErrorAction SilentlyContinue 
-             $zidreferalUrl = $zid | Select-String -Pattern "ReferrerUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
-             $zidhost = $zid | Select-String -Pattern "HostUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
-             if ($null -ne $zidreferalUrl -and $null -ne $zidhost ){
-                $o += "$time,$User,$path,$zidreferalUrl,$zidhost`n"
-
-         }
+        $o += Get-Zids -Scope AllUsers -Workfolder $downloadedFiles -User $User
              
         }
      }
- }
+ 
 # Scan files in downloads folder of current user
  elseif ( $Scope -eq "CurrentUser")
  {
@@ -80,7 +89,7 @@ else{
             $downloadedFiles = Get-ChildItem -File -Recurse $dfolder
             #For each download extract Zone identifier data stream 
 
-            $o = "CreationTime, File, ReferalURL, HostURL`n"
+            $o = "CreationTime, UserName, File, ReferalURL, HostURL`n"
             foreach ($file in $downloadedFiles)
             {
                  $path = $file.FullName
@@ -89,7 +98,7 @@ else{
                  $zidreferalUrl = $zid | Select-String -Pattern "ReferrerUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
                  $zidhost = $zid | Select-String -Pattern "HostUrl=(.*)" | ForEach-Object {"$($_.matches.groups[1])"}
                  if ($null -ne $zidreferalUrl -and $null -ne $zidhost ){
-                    $o += "$time,$path,$zidreferalUrl,$zidhost`n"
+                    $o += "$time,$User,$path,$zidreferalUrl,$zidhost`n"
                 }
                 }
 
