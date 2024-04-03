@@ -5,6 +5,9 @@
     Write-Host "ZidExtractor initializes!" -ForegroundColor Blue
     Start-Sleep -Seconds 2
 
+
+    asDSAD"LKjsad:KLOnmsad:KLnASD:LKSAD:KNL;nkldsA:LNKADSNKL:DAS:LNKNKL:
+
 # Do not continue if -Scope argument is not inputted by user
 if (-not $Scope) {
     Write-Error "Usage: Invoke-ZidExtractor.ps1 -Scope 'AllUsers' or 'CurrentUser' or 'C:\your\path\to\dir' (None-Recursive) or 'C:\your\path\to\file', Optional -CSV <path>" -Category SyntaxError
@@ -94,7 +97,7 @@ else{
         
  }  
 
-# If -CSV argument was supplied, try writing the output to path supplied
+# if CSV argument was supplied, try writing the output to path supplied
 if ( $CSV) {  
      try {
         $o | Out-File -FilePath $CSV -ErrorAction Stop
