@@ -22,7 +22,7 @@ This script will extract the following useful data about files scanned:
 
 `Host URL` - Includes the URL from which the file was downloaded
 
-`Referral URL` - Includes the URL that hoseted the download link
+`Referral URL` - Includes the website that contained the download link
 ## Running ZidExtractor
 Running `Invoke-ZidExtractor.ps1` with no parameters will result with an Error, Always supply a `-Scope`.
 
