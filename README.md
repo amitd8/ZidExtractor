@@ -10,7 +10,7 @@
 
 Invoke-ZidExtractor.ps1 is a PowerShell script that automates the extraction process of Zone.identifer data of a file! 
 
-Zone.identifer (Zid) is a metadata attribute that is used by the NTFS flie system to store information about the origin of a file and its [security zone](https://learn.microsoft.com/en-us/deployedge/per-site-configuration-by-policy)!
+Zone.identifer (Zid) is a metadata attribute that is used by the NTFS file system to store information about the origin of a file and its [security zone](https://learn.microsoft.com/en-us/deployedge/per-site-configuration-by-policy)!
 
 This data can be useful for Digital Forensics Investigators to determine the website from which a file was downloaded.
 
@@ -46,7 +46,7 @@ PS .\Invoke-ZidExtractor.ps1 -Scope C:\path\to\file\or\dir
 ## Output Data to CSV (Recommended), CSV later can be loaded in TimelimeExplorer for further analysis
 Adding the argument `-CSV` will output the data to given file path.
 ``` powershell
-# Script Syntax for outputing data to CSV
+# Script Syntax for outputting  data to CSV
 PS .\Invoke-ZidExtractor.ps1 -Scope CurrentUser -CSV ..\artifacts\ZidsofUserAmitd.csv
 ```
 ## Output To console Example
